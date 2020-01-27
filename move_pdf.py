@@ -14,13 +14,23 @@ def _menu():
     _switch_case(opcion)
 
 def _solicitar_ruta_entrada():
-    ruta_entrada = input('Ingresa la lista de archivos a transportar:\n')
-    return ruta_entrada
+    try:
+        ruta_entrada = input('Ingresa la lista de archivos a transportar:\n')
+        return ruta_entrada
+    except Exception:
+        print('Error: ' + str(Exception.with_traceback))
+    finally:
+        return ruta_entrada
 
 def _convertir_archivo_en_lista(r):
-    with open(r) as archivo:
-        arr = [line.rstrip('\n') for line in archivo]
-    return arr
+    try:
+        with open(r) as archivo:
+            arr = [line.rstrip('\n') for line in archivo]
+        return arr
+    except IOError:
+        print('Error: Ruta de archivo no válida.')
+    except Exception:
+        print('Error: ' + str(Exception.with_traceback))
 
 def _solicitar_path():
     path = input('Ingresa el path en el que deseas replicar la estructura de carpetas:\n')
@@ -36,33 +46,54 @@ def _rutas_digester(x, y):
 
 def _crear_directorios(arr):
     arreglo_dir = []
-    for item in arr:
-        arr_item = item.split('/')
-        arr_item.pop(-1)
-        nuevo_directorio = ''
-        for i in arr_item:
-            nuevo_directorio += i
-            nuevo_directorio += '/'
-        arreglo_dir.append(nuevo_directorio)
-    return arreglo_dir
+    try:
+        for item in arr:
+            arr_item = item.split('/')
+            arr_item.pop(-1)
+            nuevo_directorio = ''
+            for i in arr_item:
+                nuevo_directorio += i
+                nuevo_directorio += '/'
+            arreglo_dir.append(nuevo_directorio)
+        return arreglo_dir
+    except IOError as e:
+        print('Error de directorios.\n' + str(e.with_traceback))
+    except Exception:
+        print('Error: ' + str(Exception.with_traceback))
 
 def _crear_carpetas(arr):
-    for item in arr:
-        if not os.path.exists(item):
-	        pathlib.Path(item).mkdir(parents=True, exist_ok=True)
+    try:
+        for item in arr:
+            if not os.path.exists(item):
+	            pathlib.Path(item).mkdir(parents=True, exist_ok=True)
+    except IOError as e:
+        print('Error de directorior.\n' + str(e.with_traceback))
+    except Exception:
+        print('Error: ' + str(Exception.with_traceback))
 
 def _mover_archivos(x, y):
     arr_log = []
-    count = 0
-    for i in range(len(x)):
-        shutil.copyfile(x[i], y[i])
-        count +=1
-        log = 'El archivo {} fue copiado.\n'.format(x[i])
+    try: 
+        count = 0
+        for i in range(len(x)):
+            shutil.copyfile(x[i], y[i])
+            count +=1
+            log = 'El archivo {} fue copiado.\n'.format(x[i])
+            arr_log.append(log)
+        with open('log.txt', 'w') as f:
+            for i in arr_log:
+                f.write(i)
+        return count
+    except IOError as e:
+        print('Error de directorios.\n' + str(e.with_traceback))
+        log = 'Error de directorios: ' + str(e)
         arr_log.append(log)
-    with open('log.txt', 'w') as f:
-        for i in arr_log:
-            f.write(i)
-    return count
+    except Exception:
+        print('Error: ' + str(Exception.with_traceback))
+        log = 'Error: ' + str(Exception)
+        arr_log.append(log)
+    finally:
+        continue
 
 def _switch_case(o):
     if o == 'M':
@@ -83,3 +114,4 @@ def _switch_case(o):
 if __name__ == '__main__':
     while True:
         _menu()
+    sys.exit()
