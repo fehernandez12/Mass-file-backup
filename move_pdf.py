@@ -67,33 +67,33 @@ def _crear_carpetas(arr):
             if not os.path.exists(item):
 	            pathlib.Path(item).mkdir(parents=True, exist_ok=True)
     except IOError as e:
-        print('Error de directorior.\n' + str(e.with_traceback))
+        print('Error de directorios.\n' + str(e.with_traceback))
     except Exception:
         print('Error: ' + str(Exception.with_traceback))
 
 def _mover_archivos(x, y):
     arr_log = []
-    try: 
-        count = 0
-        for i in range(len(x)):
+    count = 0
+    for i in range(len(x)):
+        try:
             shutil.copyfile(x[i], y[i])
             count +=1
             log = 'El archivo {} fue copiado.\n'.format(x[i])
             arr_log.append(log)
-        with open('log.txt', 'w') as f:
-            for i in arr_log:
-                f.write(i)
-        return count
-    except IOError as e:
-        print('Error de directorios.\n' + str(e.with_traceback))
-        log = 'Error de directorios: ' + str(e)
-        arr_log.append(log)
-    except Exception:
-        print('Error: ' + str(Exception.with_traceback))
-        log = 'Error: ' + str(Exception)
-        arr_log.append(log)
-    finally:
-        continue
+        except IOError as e:
+            print('Error de directorios.\n' + str(e.with_traceback) + '\n')
+            log = 'Error de directorios: ' + str(e) + '\n'
+            arr_log.append(log)
+            pass
+        except Exception:
+            print('Error: ' + str(Exception.with_traceback) + '\n')
+            log = 'Error: ' + str(Exception) + '\n'
+            arr_log.append(log)
+            pass
+    with open('log.txt', 'w') as f:
+        for i in arr_log:
+            f.write(i)
+    return count
 
 def _switch_case(o):
     if o == 'M':
